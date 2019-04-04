@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Compile C to WebAssembly</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="format-detection" content="telephone=no, email=no" />
+  </head>
+
+  <body>
+    <h1>Compile C to WebAssembly</h1>
+    <p>The test result can be found in console.</p>
+
+    <script src="./loader.js"></script>
+    <script src="fibonacci.js"></script>
+    <script>
+      const n = 48;
+      loadWebAssembly("fibonacci.wasm").then(instance => {
+        const fibonacci = instance.exports._fibonacci;
+
+        const wDateBefore = Date.now();
+        console.log(`当n为${n}时，对应数列的值为:`, fibonacci(n));
+        const wDateDiff = Date.now() - wDateBefore;
+        console.log("wasm计算所花时间(ms)", wDateDiff);
+
+        const jsDateBefore = Date.now();
+        console.log(`当n为${n}时，对应数列的值为:`, fib(n));
+        const jsDateDiff = Date.now() - jsDateBefore;
+        console.log("js计算所花时间(ms)", jsDateDiff);
+
+        console.log("");
+        console.log(
+          "时间相差:",
+          `${(((jsDateDiff - wDateDiff) / jsDateDiff) * 100).toFixed(0)}%`
+        );
+      });
+    </script>
+  </body>
+</html>
